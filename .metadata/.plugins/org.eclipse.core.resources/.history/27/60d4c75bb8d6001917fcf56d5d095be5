@@ -1,0 +1,14 @@
+package unit3_multithread;
+
+import java.net.ServerSocket;
+
+public class ServerMain {
+	public ServerMain() throws Exception {
+		ServerSocket serverSocket = new ServerSocket(2020);
+		System.out.println("Port 2020 is now open");
+		
+		while(true) {
+			
+		}
+	}
+}

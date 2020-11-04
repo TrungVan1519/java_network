@@ -1,0 +1,66 @@
+package unit2_more_complex;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Random;
+
+public class Server {
+
+	public Server() throws IOException {
+		// Step 1: Create ser socket and regualr socket
+		ServerSocket serverSocket = new ServerSocket(2020);
+		System.out.println("Port 2020 is opened");
+		
+		Socket regularSocket = serverSocket.accept();
+		System.out.println("Client " + regularSocket.getInetAddress() + " has connected");
+	
+		// Step 2: Create I/O Buffers
+		BufferedReader fromClient = new BufferedReader(new InputStreamReader(regularSocket.getInputStream()));
+		PrintWriter toClient = new PrintWriter(new OutputStreamWriter(regularSocket.getOutputStream()), true);
+
+		// Step 3: Create communication
+		toClient.println("Do you want to play the game? (Press y or Y to play)");
+		String response = fromClient.readLine();
+		System.out.println("Client " + " says: " + response);
+		
+		if(response.charAt(0) == 'y' || response.charAt(0) == 'Y') {
+			int result = new Random().nextInt(10) + 1;
+			int answer = -1;
+			boolean checked = false;
+			
+			System.out.println("==> The random number is: " + result);
+			toClient.println("Guess a number [1-10]: ");
+			
+			while (checked == false) {
+				response = fromClient.readLine();
+				answer = Integer.parseInt(response);
+				
+				if(answer == result) {
+					checked = true;
+				}
+				
+				System.out.println("Client " + " says: " + response + " ==> " + checked);
+				toClient.println(checked);
+			}
+			toClient.println("Ping pong! The random number is " + result);
+			toClient.append("Goodgame");
+		}
+		toClient.println("Bye");
+		
+		// Step 4: Close regular socket
+		regularSocket.close();
+		System.out.println("Socket is closed");
+	}
+	public static void main(String[] args) {
+		try {
+			new Server();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+}

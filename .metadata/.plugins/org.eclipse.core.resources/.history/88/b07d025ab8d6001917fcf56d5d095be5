@@ -1,0 +1,21 @@
+package unit3_multithread;
+
+import java.net.Socket;
+
+public class ServerThread implements Runnable {
+
+	private ServerMain serverMain;
+	private Socket regularSocket;
+	
+	public ServerThread(ServerMain serverMain, Socket regularSocket) {
+		super();
+		this.serverMain = serverMain;
+		this.regularSocket = regularSocket;
+	}
+	
+	@Override
+	public void run() {
+		int clientCount = 
+	}
+
+}

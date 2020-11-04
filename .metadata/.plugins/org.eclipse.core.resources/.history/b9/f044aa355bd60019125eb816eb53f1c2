@@ -1,0 +1,44 @@
+package unit2_more_complex;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.Scanner;
+
+public class Client {
+
+	public Client() throws IOException {
+		Socket regularSocket = new Socket("127.0.0.1", 2020);
+		System.out.println("Successful connection to the server!");
+		
+		BufferedReader fromServer = new BufferedReader(new InputStreamReader(regularSocket.getInputStream()));
+		PrintWriter toServer = new PrintWriter(new OutputStreamWriter(regularSocket.getOutputStream()), true);
+
+		Scanner s = new Scanner(System.in);
+		String response = fromServer.readLine();
+		System.out.println(response);
+		char request = s.nextLine().charAt(0);
+		toServer.print(request+"");
+//		response = fromServer.readLine();
+//		if (request == 'y' || request == 'Y') {
+//			String answer = "";
+//			do {
+//				answer = s.nextLine();
+//				toServer.print(answer);
+//			} while (true);
+//		}
+		
+		regularSocket.close();
+		System.out.println("Socket is closed");
+	}
+	public static void main(String[] args) {
+		try {
+			new Client();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}

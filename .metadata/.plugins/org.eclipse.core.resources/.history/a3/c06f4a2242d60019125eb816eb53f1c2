@@ -1,0 +1,50 @@
+package unit2;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.Socket;
+
+// Client side for our app
+//		> Gui thong diep "Thanks" cho server
+public class Client {
+	
+	public Client() throws Exception {
+		// Create regular socket
+//		Socket socket = new Socket("localhost", 2020);
+		Socket regularSocket = new Socket("127.0.0.1", 2020);
+		System.out.println("Successful connection to the server!");
+		// > new Socket(InetAddress, port) ~ new Socket("localhost", 2020)
+		// 		+ InetAddress = "localhost": It's IP address of the server, this is server which is on this machine
+		//		+ port = 2020: It's listening port, it has to match to port of Server's socket obj
+		// > Co the thay "localhost" thanh cac dia chi IP VD nhu 127.0.0.1 (thuc ra day chinh la dia chi IP cua localhost), ...
+		
+		// Create I/O Buffers
+		BufferedReader fromServer = new BufferedReader(new InputStreamReader(regularSocket.getInputStream()));
+		PrintWriter toServer = new PrintWriter(new OutputStreamWriter(regularSocket.getOutputStream()), true);
+		
+		// Create message
+		String response = fromServer.readLine(); // Get message from server
+		System.out.println("Server says: " + response); // Display in console
+		toServer.println("Thanks"); // Send "Thanks" back to server
+		// > Note: Always use println() method intead of using print() method
+		
+		regularSocket.close();
+		System.out.println("Socket closed");
+	}
+	// On the client side we only have 1 type of socket that is regular socket
+	
+	public static void main(String[] args) {
+		try {
+			new Client();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	// > Muon xem cuoc hoi thoai cua Server va Client thi:
+	//		+ Bat dau chay class Server truoc
+	//		+ Sau do chay class Client
+	// 		+ Cuoi cung bam icon "Display selected console" (hinh cai man hinh TV ben phai man hinh console)
+	//			de tiep tuc cuoc hoi thoain neu khong bam thi se chi thay loi thoai dau tien cua Server va Client thoi
+	// > Su dung TcpView de huy port neu nhu muon chay lai lan tiep theo cho chinh port day
+}

@@ -1,0 +1,77 @@
+package unit2;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+// Server side for application
+public class Server {
+	
+	public Server() throws Exception {
+		// Create a server socket
+		ServerSocket serverSocket = new ServerSocket(2020);
+		System.out.println("Port 2020 is opened");
+		// > 2020 is our port in OS
+		
+		// Create a regular socket 
+		Socket regularSocket = serverSocket.accept();
+		System.out.println("Client " + regularSocket.getInetAddress() + " has connected");
+		// > + accept() is blocking method which accepts incoming connections
+		//	 + blocking method means Java will stop in the line 20 (line has accept() method) and Java is not going to
+		//		 continue to go through the other lines until an incoming connection actually appears
+		//	     and it is accepted
+		// > + "Inet" is short for "Internet"
+		//	 + getInetAddress() retrieves the client's IP address from the socket obj
+		
+		// Create I/O Buffers
+		BufferedReader fromClient = new BufferedReader(new InputStreamReader(regularSocket.getInputStream()));
+		// > used for incoming stream of data that is the data that is coming from the client to the server
+		PrintWriter toClient = new PrintWriter(new OutputStreamWriter(regularSocket.getOutputStream()), true);
+		// > used for outgoing stream of data which are all the messages that server sends to client
+		// => For incoming data and for outgoing data, a socket is like a door, we can come in or we can get out
+		//		+ So by uisng getInputStream(), we're selecting the data that we want to look at
+		//		+ If data comes in pretty much like gibberish,  it's going to be messed up. That's why we need the 
+		//			InputStreamReader() method to switch that unreadable data into something we can understand
+		//		+ BufferedReader() co tac dung nhu sau: sender gui cho receiver 1 File thi khi Buffer cua sender day 
+		//			thi data trong app moi duoc gui di va data trong File se giam xuong va Buffer cua sender se quay ve 0 va tich luy lai tu dau, 
+		//			Buffer cua reciever day thi data moi duoc doc de lay vao va Buffer cua receiver se lai quay ve 0 de tich luy lai
+		//		+ arg "true" trong PrintWriter() co tac dung khi Client gui message cho Server thi co the se bi thua 1 it data trong may Client
+		//			khong the chuyen di tiep duoc vi chung khong du kha nang lam day Buffer cua Client nua nen su dung
+		//			arg "true" de thong bao rang cu gui not File di khong quan trong luong data cuoi cung co lam day Buffer hay khong
+		
+		// Create messages
+		toClient.println("Welcome"); // Send "Welcome" to client
+		String response = fromClient.readLine(); // Get response from client
+		System.out.println("Client " + regularSocket.getInetAddress() + " says: " + response); // Display in console
+		// > Note: Always use println() method intead of using print() method
+		
+		// Close socket: Always have to close socket when the communication is over
+		regularSocket.close();
+		System.out.println("Server is closed");
+		// > socket.close() create disconnection
+	}
+	// > On the server of the app, we're going to have 2 types of sockets:
+	//		+ A server socket: It's just going to hold a port in the operating system for our app
+	//		+ A regular socket (regular communication socket)
+	
+	public static void main(String[] args) {
+		try {
+			new Server();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	// > Muon xem cuoc hoi thoai cua Server va Client thi:
+	//		+ Bat dau chay class Server truoc
+	//		+ Sau do chay class Client
+	// 		+ Cuoi cung bam icon "Display selected console" (hinh cai man hinh TV ben phai man hinh console)
+	//			de tiep tuc cuoc hoi thoain neu khong bam thi se chi thay loi thoai dau tien cua Server va Client thoi
+	// > Su dung TcpView de huy port neu nhu muon chay lai lan tiep theo cho chinh port day vi nhu da noi o tren 
+	//		Socket socket = serverSocket.accept(); se lam Java luon dung lai de doi den khi nao co 1 connection hop le duoc
+	//		accept thi moi chay dong lenh tiep theo, neu khong thi no se mai dung o dong do va port do se khong bao h duoc dong
+	//		ke ca ta tat chay console nen neu chay lan tiep theo vao chinh port do se bi loi vi port do dang doi connection hop le
+	//		de accept chu khong can phai mo lai port nua
+}

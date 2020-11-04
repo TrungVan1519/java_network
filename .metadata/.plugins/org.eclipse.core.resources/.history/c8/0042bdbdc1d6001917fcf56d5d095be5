@@ -1,0 +1,42 @@
+package unit1_simple;
+
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.util.Scanner;
+
+public class Receiver {
+	public Receiver() throws Exception {
+		//// Step 1: Create regular socket, DatagramPacket, buffer
+		DatagramSocket regularSocket = new DatagramSocket(2020);
+		DatagramPacket packet = null;
+		byte[] buffer = null;
+		
+		//// Step 2: Get message from Sender
+		// Get message
+		buffer = new byte[1500];
+		packet = new DatagramPacket(buffer, buffer.length);
+		
+		regularSocket.receive(packet);
+		// Display to Receiver
+		String response = new String(buffer).trim();
+		System.out.println("You recieved from sender: " + response);
+		
+		//// Step 3: Send message to Sender
+		// Create message
+		Scanner s = new Scanner(System.in);
+		System.out.println("Enter your message: " );
+		String request = s.nextLine();
+		buffer = request.getBytes();
+		// Send message
+		InetAddress senderAddress = packet.getAddress();
+		int senderPort = packet.getPort();
+		
+		packet = new DatagramPacket(buffer, buffer.length);
+		packet.setAddress(senderAddress);
+		packet.setPort(senderPort);
+		
+		regularSocket.send(packet);
+		System.out.println("You sent to sender: " + request);
+	}
+}

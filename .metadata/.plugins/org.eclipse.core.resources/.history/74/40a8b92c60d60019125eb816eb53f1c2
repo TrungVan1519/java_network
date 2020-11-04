@@ -1,0 +1,72 @@
+package unit1_simple;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.Socket;
+
+public class Client {
+	public Client() throws Exception {
+		//// Step 1: Create a regular socket
+		// Cach 1: Su dung "localhost"
+		// Socket socket = new Socket("localhost", 2020);
+		// Cach 2: Su dung dia chi IP thay cho tu "localhost" (Dia chi IP cua "localhost" la "127.0.0.1"
+		//			Muon xem IP cua may tinh thi su dung ipconfig
+		Socket regularSocket = new Socket("127.0.0.1", 2020);
+		System.out.println("Successful connection to the server!");
+		// > new Socket(InetAddress, port) ~ new Socket("localhost", 2020)
+		// 		+ InetAddress = "localhost": It's IP address of the server, this is server which is on this machine
+		//		+ port = 2020: It's listening port, it has to match to port of Server's socket obj
+		// > Co the thay "localhost" thanh cac dia chi IP VD nhu 127.0.0.1 (thuc ra day chinh la dia chi IP cua localhost), ...
+		
+		//// Step 2: Create I/O Buffers
+		BufferedReader fromServer = new BufferedReader(new InputStreamReader(regularSocket.getInputStream()));
+		// > Su dung cho luong du lieu dau vao tu server
+		// > For incoming data and for outgoing data, a socket is like a door, we can come in or we can get out
+		//		+ Su dung getInputStream(), ta se chon ra du lieu ta muon lay
+		//		+ Neu du lieu vao rat nhieu thi se rat roi nen ta phai su dung InputStreamReader() de chuyen du lieu
+		//			khong doc duoc thanh du lieu ta co the hieu
+		//		+ BufferedReader() co tac dung nhu sau: client gui cho server 1 File (o day la 1 String) thi 
+		//			- Buffer cua client se phai tich luy, khi Buffer cua client day thi luong data day moi duoc gui di va
+		//				data trong File se giam xuong dong thoi Buffer cua client se quay ve 0 va tich luy lai tu dau.
+		//			- Buffer cua server se phai tuy luy, khi Buffer cua server day thi data moi duoc doc de lay vao 
+		//				va Buffer cua server se lai quay ve 0 de tich luy lai
+		PrintWriter toServer = new PrintWriter(new OutputStreamWriter(regularSocket.getOutputStream()), true);
+		// > used for outgoing stream of data which are all the messages that server sends to client
+		// > CHU Y: PHAI SU DUNG DOI SO "true", neu khong se khong gui duoc tin di.
+		// > Doi so "true" trong PrintWriter() co tac dung khi client gui message cho server thi co the se bi thua 1 it
+		//		data trong server khong the chuyen di tiep duoc vi chung khong du kha nang lam day Buffer cua client nua 
+		//		nen su dung doi so "true" de thong bao rang cu gui not File di khong quan trong luong data cuoi cung co 
+		//		lam day Buffer cua client hay khong
+		
+		//// Step 3: Create message
+		String response = fromServer.readLine();
+		System.out.println("Server says: " + response); // Display in console
+		toServer.println("Thanks"); 
+		// > Send "Thanks" back to server
+		// > Note: Always use println() method intead of using print() method
+
+		//// Step 4: Close Socket: Always have to close socket when the communication is over
+		regularSocket.close();
+		System.out.println("Socket is closed");
+	}
+	
+	public static void main(String[] args) {
+		try {
+			new Client();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		// > Muon xem cuoc hoi thoai cua Server va Client thi:
+		//		+ Bat dau chay class Server truoc
+		//		+ Sau do chay class Client
+		// 		+ Cuoi cung bam icon "Display selected console" (hinh cai man hinh TV ben phai man hinh console)
+		//			de tiep tuc cuoc hoi thoain neu khong bam thi se chi thay loi thoai dau tien cua Server va Client thoi
+		// > Su dung TcpView de huy port neu nhu muon chay lai lan tiep theo cho chinh port day vi nhu da noi o tren 
+		//		Socket socket = serverSocket.accept(); se lam Java luon dung lai de doi den khi nao co 1 connection hop le duoc
+		//		accept thi moi chay dong lenh tiep theo, neu khong thi no se mai dung o dong do va port do se khong bao h duoc dong
+		//		ke ca ta tat chay console nen neu chay lan tiep theo vao chinh port do se bi loi vi port do dang doi connection hop le
+		//		de accept chu khong can phai mo lai port nua
+	}
+}

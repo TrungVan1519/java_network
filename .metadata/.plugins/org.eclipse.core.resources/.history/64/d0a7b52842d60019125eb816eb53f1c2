@@ -1,0 +1,55 @@
+package unit1;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.Socket;
+
+public class Client {
+	public Client() throws Exception {
+		//// Step 1: Create a regular socket
+		// Cach 1: Su dung "localhost"
+		// Socket socket = new Socket("localhost", 2020);
+		// Cach 2: Su dung dia chi IP thay cho tu "localhost"
+		Socket regularSocket = new Socket("127.0.0.1", 2020);
+		System.out.println("Successful connection to the server!");
+		// > new Socket(InetAddress, port) ~ new Socket("localhost", 2020)
+		// 		+ InetAddress = "localhost": It's IP address of the server, this is server which is on this machine
+		//		+ port = 2020: It's listening port, it has to match to port of Server's socket obj
+		// > Co the thay "localhost" thanh cac dia chi IP VD nhu 127.0.0.1 (thuc ra day chinh la dia chi IP cua localhost), ...
+		
+		//// Step 2: Create I/O Buffers
+		BufferedReader fromServer = new BufferedReader(new InputStreamReader(regularSocket.getInputStream()));
+		PrintWriter toServer = new PrintWriter(new OutputStreamWriter(regularSocket.getOutputStream()), true);
+		// > used for outgoing stream of data which are all the messages that server sends to client
+		// => For incoming data and for outgoing data, a socket is like a door, we can come in or we can get out
+		//		+ So by uisng getInputStream(), we're selecting the data that we want to look at
+		//		+ If data comes in pretty much like gibberish,  it's going to be messed up. That's why we need the 
+		//			InputStreamReader() method to switch that unreadable data into something we can understand
+		//		+ BufferedReader() co tac dung nhu sau: sender gui cho receiver 1 File thi khi Buffer cua sender day 
+		//			thi data trong app moi duoc gui di va data trong File se giam xuong va Buffer cua sender se quay ve 0 va tich luy lai tu dau, 
+		//			Buffer cua reciever day thi data moi duoc doc de lay vao va Buffer cua receiver se lai quay ve 0 de tich luy lai
+		//		+ doi so "true" trong PrintWriter() co tac dung khi Client gui message cho Server thi co the se bi thua 1 it data trong may Client
+		//			khong the chuyen di tiep duoc vi chung khong du kha nang lam day Buffer cua Client nua nen su dung
+		//			doi so "true" de thong bao rang cu gui not File di khong quan trong luong data cuoi cung co lam day Buffer hay khong
+		
+		//// Step 3: Create message
+		String response = fromServer.readLine();
+		System.out.println("Server says: " + response); // Display in console
+		toServer.println("Thanks"); // Send "Thanks" back to server
+		// > Note: Always use println() method intead of using print() method
+
+		//// Step 4: Close Socket: Always have to close socket when the communication is over
+		regularSocket.close();
+		System.out.println("Socket closed");
+	}
+	
+	public static void main(String[] args) {
+		try {
+			new Client();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}

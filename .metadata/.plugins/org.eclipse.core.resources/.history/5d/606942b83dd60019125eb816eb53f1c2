@@ -1,0 +1,67 @@
+package unit1;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class Server {
+	
+	public Server() throws IOException {
+		//// Step 1: Create a server socket, a regular socket
+		// Create a server socket
+		ServerSocket serverSocket = new ServerSocket(2020);
+		System.out.println("Port 2020 is opened");
+		// Create a regular socket
+		Socket regularSocket = serverSocket.accept();
+		System.out.println("Client " + regularSocket.getInetAddress() + " has connected");
+		/* ==> Tong ket
+		 * 	 > Port 2020 khi tao ServerSocket la tuy y lua chon nhung dung chon
+		 * 			nhung Port da duoc su dung trong Server roi
+		 *   > + accept() is blocking method which accepts incoming connections
+		 *	   + blocking method means Java will stop in the line 15 (line has accept() method) and Java is not going to
+		 * 	 		continue to go through the other lines until an incoming connection actually appears
+		 * 			and it is accepted
+		 * 	 > + "Inet" is short for "Internet"
+		 * 	   + getInetAddress() retrieves the client's IP address from Socket
+		 * */
+	
+		//// Step 2: Create I/O Buffers
+		BufferedReader fromClient = new BufferedReader(new InputStreamReader(regularSocket.getInputStream()));
+		// > used for incoming stream of data that is the data that is coming from the client to the server
+		PrintWriter toClient = new PrintWriter(new OutputStreamWriter(regularSocket.getOutputStream()));
+		// > used for outgoing stream of data which are all the messages that server sends to client
+		// => For incoming data and for outgoing data, a socket is like a door, we can come in or we can get out
+		//		+ So by uisng getInputStream(), we're selecting the data that we want to look at
+		//		+ If data comes in pretty much like gibberish,  it's going to be messed up. That's why we need the 
+		//			InputStreamReader() method to switch that unreadable data into something we can understand
+		//		+ BufferedReader() co tac dung nhu sau: sender gui cho receiver 1 File thi khi Buffer cua sender day 
+		//			thi data trong app moi duoc gui di va data trong File se giam xuong va Buffer cua sender se quay ve 0 va tich luy lai tu dau, 
+		//			Buffer cua reciever day thi data moi duoc doc de lay vao va Buffer cua receiver se lai quay ve 0 de tich luy lai
+		//		+ arg "true" trong PrintWriter() co tac dung khi Client gui message cho Server thi co the se bi thua 1 it data trong may Client
+		//			khong the chuyen di tiep duoc vi chung khong du kha nang lam day Buffer cua Client nua nen su dung
+		//			arg "true" de thong bao rang cu gui not File di khong quan trong luong data cuoi cung co lam day Buffer hay khong
+				
+		//// Step 3: Create message
+		toClient.println("Welcome");
+		System.out.println("Client " 
+							+ regularSocket.getInetAddress() 
+							+ " says: " + fromClient.readLine());
+		
+		//// Step 4: Close Socket when the communication is over
+		regularSocket.close();
+		System.out.println("Socket is closed");
+	}
+	
+	public static void main(String[] args) {
+		try {
+			new Server();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+}

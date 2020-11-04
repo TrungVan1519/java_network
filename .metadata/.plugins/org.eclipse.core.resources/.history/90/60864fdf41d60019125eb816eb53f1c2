@@ -1,0 +1,47 @@
+package unit1;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.Socket;
+
+public class Client {
+	public Client() throws Exception {
+		//// Step 1: Create a regular socket
+		// Cach 1: Su dung "localhost"
+		// Socket socket = new Socket("localhost", 2020);
+		// Cach 2: Su dung dia chi IP thay cho tu "localhost"
+		Socket regularSocket = new Socket("127.0.0.1", 2020);
+		System.out.println("Successful connection to the server!");
+		// > new Socket(InetAddress, port) ~ new Socket("localhost", 2020)
+		// 		+ InetAddress = "localhost": It's IP address of the server, this is server which is on this machine
+		//		+ port = 2020: It's listening port, it has to match to port of Server's socket obj
+		// > Co the thay "localhost" thanh cac dia chi IP VD nhu 127.0.0.1 (thuc ra day chinh la dia chi IP cua localhost), ...
+		
+		//// Step 2: Create I/O Buffers
+		BufferedReader fromServer = new BufferedReader(new InputStreamReader(regularSocket.getInputStream()));
+		PrintWriter toServer = new PrintWriter(new OutputStreamWriter(regularSocket.getOutputStream()), true);
+		
+//		//// Step 3: Create message
+//		String response = fromServer.readLine();
+//		System.out.println("Server says: " + response); // Display in console
+//		toServer.println("Thanks"); // Send "Thanks" back to server
+//		// > Note: Always use println() method intead of using print() method
+		
+		String response = fromServer.readLine(); // Get message from server
+		System.out.println("Server says: " + response); // Display in console
+		toServer.println("Thanks"); // Send "Thanks" back to server
+		
+		regularSocket.close();
+		System.out.println("Socket closed");
+	}
+	
+	public static void main(String[] args) {
+		try {
+			new Client();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}
